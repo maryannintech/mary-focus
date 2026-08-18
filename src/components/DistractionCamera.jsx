@@ -147,7 +147,7 @@ export function DistractionCamera({ isActive, isBreak, isWaiting, isMuted, onDis
 
       {!isLoading && (
         <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg text-xs font-mono text-white/90 border border-white/10">
-          detected: <span className="text-(--violet) font-bold">{isBreak || isWaiting ? "break mode ☕" : detectedLabel}</span>
+          detected: <span className="text-(--violet) font-bold">{isBreak || isWaiting ? "break mode" : detectedLabel}</span>
         </div>
       )}
     </div>
