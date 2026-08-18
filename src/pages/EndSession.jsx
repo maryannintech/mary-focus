@@ -84,7 +84,7 @@ export function EndSession() {
             ready for another session?
           </button>
 
-          <div className="text-(--violet) text-lg font-bold font-mono leading-snug whitespace-pre text-center">
+          <div className="text-(--violet) text-lg font-bold font-mono leading-snug whitespace-pre text-center gentleBob">
             <p> /)/)</p>
             <p>( . .)</p>
             <p>( づ♡</p>

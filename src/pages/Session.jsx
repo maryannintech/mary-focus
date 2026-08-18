@@ -309,8 +309,8 @@ export function Session() {
 
           <div className="flex flex-col gap-6 min-w-[340px]">
             <div>
-              <div className="flex items-center justify-between gap-4 mb-5">
-                <p className="text-(--violet) font-mono text-sm tracking-wider lowercase">
+              <div className="flex items-center justify-between gap-4 mb-2">
+                <p className="text-(--violet) font-mono text-md font-bold tracking-wider lowercase">
                   {isBreak
                     ? "take a break"
                     : isWaitingForBreak
@@ -322,7 +322,7 @@ export function Session() {
                 <button
                   type="button"
                   onClick={toggleMute}
-                  className="bg-(--violet)/20 hover:bg-(--violet)/30 text-(--violet) font-mono text-xs px-3 py-1.5 rounded-lg cursor-pointer transition-all flex items-center gap-1.5 border border-(--violet)/30"
+                  className="bg-(--violet)/20 hover:bg-(--violet)/30 text-(--violet) font-mono text-xs px-3 py-1 rounded-lg cursor-pointer transition-all flex items-center gap-1.5 border border-(--violet)/30"
                 >
                   {isMuted ? "🔇" : "🔊"}
                 </button>
