@@ -18,7 +18,6 @@ export function PageLayout() {
         >
           maryannintech
         </a>{" "}
-        for maryann
       </footer>
     </>
   );
