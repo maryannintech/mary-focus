@@ -18,6 +18,7 @@ export function PageLayout() {
         >
           maryannintech
         </a>{" "}
+        ✦ computer vision powered by teachable machine{" "}
       </footer>
     </>
   );

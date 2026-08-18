@@ -3,7 +3,13 @@ import phoneDetectedAudio from "../assets/phone_detected_sound.ogg";
 
 const DISTRACTION_ALARM = phoneDetectedAudio;
 
-export function DistractionCamera({ isActive, isBreak, isWaiting, isMuted, onDistractionDetected }) {
+export function DistractionCamera({
+  isActive,
+  isBreak,
+  isWaiting,
+  isMuted,
+  onDistractionDetected,
+}) {
   const containerRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [detectedLabel, setDetectedLabel] = useState("");
@@ -59,7 +65,8 @@ export function DistractionCamera({ isActive, isBreak, isWaiting, isMuted, onDis
           setIsLoading(false);
           if (containerRef.current) {
             containerRef.current.innerHTML = "";
-            webcamRef.current.canvas.className = "w-full h-full object-cover rounded-2xl";
+            webcamRef.current.canvas.className =
+              "w-full h-full object-cover rounded-2xl";
             containerRef.current.appendChild(webcamRef.current.canvas);
           }
           loop();
@@ -101,7 +108,9 @@ export function DistractionCamera({ isActive, isBreak, isWaiting, isMuted, onDis
   const predict = async () => {
     if (!modelRef.current || !webcamRef.current) return;
 
-    const predictions = await modelRef.current.predict(webcamRef.current.canvas);
+    const predictions = await modelRef.current.predict(
+      webcamRef.current.canvas,
+    );
 
     let topClass = "";
     let highestProb = 0;
@@ -116,7 +125,8 @@ export function DistractionCamera({ isActive, isBreak, isWaiting, isMuted, onDis
     setDetectedLabel(topClass);
 
     if (highestProb > 0.8) {
-      const isHoldingPhone = topClass.includes("iphone") || topClass.includes("android");
+      const isHoldingPhone =
+        topClass.includes("iphone") || topClass.includes("android");
 
       if (isHoldingPhone) {
         consecutiveFramesRef.current += 1;
@@ -136,7 +146,10 @@ export function DistractionCamera({ isActive, isBreak, isWaiting, isMuted, onDis
 
   return (
     <div className="relative w-96 h-96 rounded-2xl ring-8 ring-(--violet)/40 bg-[#c4c4cc] overflow-hidden flex flex-col items-center justify-center shadow-lg">
-      <div ref={containerRef} className="w-full h-full flex items-center justify-center" />
+      <div
+        ref={containerRef}
+        className="w-full h-full flex items-center justify-center"
+      />
 
       {isLoading && (
         <div className="absolute inset-0 bg-[#c4c4cc] flex flex-col items-center justify-center text-black font-mono text-2xl">
@@ -148,7 +161,10 @@ export function DistractionCamera({ isActive, isBreak, isWaiting, isMuted, onDis
 
       {!isLoading && (
         <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg text-xs font-mono text-white/90 border border-white/10">
-          detected: <span className="text-(--violet) font-bold">{isBreak || isWaiting ? "break mode" : detectedLabel}</span>
+          detected:{" "}
+          <span className="text-(--violet) font-bold">
+            {isBreak || isWaiting ? "break mode" : detectedLabel}
+          </span>
         </div>
       )}
     </div>
