@@ -145,7 +145,7 @@ export function DistractionCamera({
   };
 
   return (
-    <div className="relative w-96 h-96 rounded-2xl ring-8 ring-(--violet)/40 bg-[#c4c4cc] overflow-hidden flex flex-col items-center justify-center shadow-lg">
+    <div className="relative w-96 h-96 rounded-2xl ring-8 ring-(--violet) bg-[#c4c4cc] overflow-hidden flex flex-col items-center justify-center shadow-lg">
       <div
         ref={containerRef}
         className="w-full h-full flex items-center justify-center"
