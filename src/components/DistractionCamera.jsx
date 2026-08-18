@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import phoneDetectedAudio from "../assets/phone_detected_sound.ogg";
 
-const DISTRACTION_ALARM = "https://actions.google.com/sounds/v1/alarms/beep_short.ogg";
+const DISTRACTION_ALARM = phoneDetectedAudio;
 
 export function DistractionCamera({ isActive, isBreak, isWaiting, isMuted, onDistractionDetected }) {
   const containerRef = useRef(null);
