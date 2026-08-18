@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+:root {
+  --indigo: #05092c;
+  --violet: #817195;
+  --gray: #C6C5CB;
+}
+
+* {
+  font-family: "Google Sans Code", monospace;
+  font-optical-sizing: auto;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--indigo);
+}
+
+
+@keyframes floatUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-float-1 {
+  animation: floatUp 0.8s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+.animate-float-2 {
+  animation: floatUp 0.8s ease-out 0.8s forwards;
+  opacity: 0;
+}
+
+.animate-float-3 {
+  animation: floatUp 0.8s ease-out 1.4s forwards;
+  opacity: 0;
+}
+
+@keyframes gentleBob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-bunny-float {
+  animation: floatUp 0.8s ease-out 1.4s forwards, gentleBob 3s ease-in-out 2.2s infinite;
+  opacity: 0;
+}
