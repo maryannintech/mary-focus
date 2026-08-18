@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
-// Placeholder chime for distraction detection alert
 const DISTRACTION_ALARM = "https://actions.google.com/sounds/v1/alarms/beep_short.ogg";
 
-export function DistractionCamera({ isActive, isBreak, isMuted, onDistractionDetected }) {
+export function DistractionCamera({ isActive, isBreak, isWaiting, isMuted, onDistractionDetected }) {
   const containerRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [detectedLabel, setDetectedLabel] = useState("");
@@ -14,10 +13,16 @@ export function DistractionCamera({ isActive, isBreak, isMuted, onDistractionDet
   const webcamRef = useRef(null);
   const animFrameIdRef = useRef(null);
 
+  // keep live props in ref to avoid stale closures in requestAnimationFrame
+  const propsRef = useRef({ isActive, isBreak, isWaiting, isMuted });
+  useEffect(() => {
+    propsRef.current = { isActive, isBreak, isWaiting, isMuted };
+  }, [isActive, isBreak, isWaiting, isMuted]);
+
   const modelUrl = import.meta.env.VITE_TEACHABLE_MACHINE_URL;
 
   const playDistractionChime = () => {
-    if (isMuted) return;
+    if (propsRef.current.isMuted) return;
     try {
       const audio = new Audio(DISTRACTION_ALARM);
       audio.play().catch((err) => console.error("Alarm error:", err));
@@ -79,7 +84,15 @@ export function DistractionCamera({ isActive, isBreak, isMuted, onDistractionDet
   const loop = async () => {
     if (webcamRef.current) {
       webcamRef.current.update();
-      await predict();
+      const { isActive, isBreak, isWaiting } = propsRef.current;
+
+      // Only run predictions during active focus sessions
+      if (isActive && !isBreak && !isWaiting) {
+        await predict();
+      } else {
+        consecutiveFramesRef.current = 0;
+        isDistractedRef.current = false;
+      }
     }
     animFrameIdRef.current = window.requestAnimationFrame(loop);
   };
@@ -89,7 +102,6 @@ export function DistractionCamera({ isActive, isBreak, isMuted, onDistractionDet
 
     const predictions = await modelRef.current.predict(webcamRef.current.canvas);
 
-    // Find highest confidence prediction
     let topClass = "";
     let highestProb = 0;
 
@@ -102,13 +114,11 @@ export function DistractionCamera({ isActive, isBreak, isMuted, onDistractionDet
 
     setDetectedLabel(topClass);
 
-    // Only detect distractions during active focus sessions (not on break, not paused)
-    if (isActive && !isBreak && highestProb > 0.8) {
+    if (highestProb > 0.8) {
       const isHoldingPhone = topClass.includes("iphone") || topClass.includes("android");
 
       if (isHoldingPhone) {
         consecutiveFramesRef.current += 1;
-        // Require 5 consecutive frames above threshold to prevent false positives
         if (consecutiveFramesRef.current > 5 && !isDistractedRef.current) {
           isDistractedRef.current = true;
           playDistractionChime();
@@ -117,7 +127,6 @@ export function DistractionCamera({ isActive, isBreak, isMuted, onDistractionDet
           }
         }
       } else {
-        // Reset when user returns to working and puts phone down
         consecutiveFramesRef.current = 0;
         isDistractedRef.current = false;
       }
@@ -125,7 +134,7 @@ export function DistractionCamera({ isActive, isBreak, isMuted, onDistractionDet
   };
 
   return (
-    <div className="relative w-96 h-96 rounded-2xl ring-8 ring-(--violet) bg-[#c4c4cc] overflow-hidden flex flex-col items-center justify-center shadow-lg">
+    <div className="relative w-96 h-96 rounded-2xl ring-8 ring-(--violet)/40 bg-[#c4c4cc] overflow-hidden flex flex-col items-center justify-center shadow-lg">
       <div ref={containerRef} className="w-full h-full flex items-center justify-center" />
 
       {isLoading && (
@@ -136,10 +145,9 @@ export function DistractionCamera({ isActive, isBreak, isMuted, onDistractionDet
         </div>
       )}
 
-      {/* Detection status pill */}
-      {!isLoading && detectedLabel && (
+      {!isLoading && (
         <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg text-xs font-mono text-white/90 border border-white/10">
-          detected: <span className="text-(--violet) font-bold">{detectedLabel}</span>
+          detected: <span className="text-(--violet) font-bold">{isBreak || isWaiting ? "break mode ☕" : detectedLabel}</span>
         </div>
       )}
     </div>

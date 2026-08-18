@@ -15,32 +15,36 @@ export function Session() {
   const navigate = useNavigate();
   const { category, task, startTime } = location.state || {};
 
-  const FOCUS_TIME = 1 * 60; // 25 minutes
-  const BREAK_TIME = 1 * 60; // 5 minutes
+  const FOCUS_TIME = 25 * 60;
+  const BREAK_TIME = 5 * 60;
 
   const [timeLeft, setTimeLeft] = useState(FOCUS_TIME);
   const [isActive, setIsActive] = useState(true);
   const [isBreak, setIsBreak] = useState(false);
-  const [isWaitingForBreak, setIsWaitingForBreak] = useState(false); // Waiting to start break
-  const [isWaitingForFocus, setIsWaitingForFocus] = useState(false); // Waiting to start next focus session
+  const [isWaitingForBreak, setIsWaitingForBreak] = useState(false); 
+  const [isWaitingForFocus, setIsWaitingForFocus] = useState(false); 
   const [isMuted, setIsMuted] = useState(false);
   const [distractions, setDistractions] = useState(0);
-  const [focusStreak, setFocusStreak] = useState(0); // Dynamic focus streak counter
+  const [focusStreak, setFocusStreak] = useState(0); 
   const [currentSession, setCurrentSession] = useState(1);
   const [isEndModalOpen, setIsEndModalOpen] = useState(false);
   const totalSessions = 4;
 
-  // Background & Alarm audio refs
+  // background & alarm audio refs
   const breakAudioRef = useRef(null);
   const focusEndAudioRef = useRef(null);
+  const breakEndAudioRef = useRef(null);
 
-  // Initialize and clean up break audio & looping focus-end alarm
+  // initialize and clean up break audio, focus-end alarm, and break-end alarm
   useEffect(() => {
     breakAudioRef.current = new Audio(BREAK_BGM_SOUND);
     breakAudioRef.current.loop = true;
 
     focusEndAudioRef.current = new Audio(FOCUS_END_CHIME);
     focusEndAudioRef.current.loop = true;
+
+    breakEndAudioRef.current = new Audio(BREAK_END_CHIME);
+    breakEndAudioRef.current.loop = true;
 
     return () => {
       if (breakAudioRef.current) {
@@ -51,10 +55,14 @@ export function Session() {
         focusEndAudioRef.current.pause();
         focusEndAudioRef.current = null;
       }
+      if (breakEndAudioRef.current) {
+        breakEndAudioRef.current.pause();
+        breakEndAudioRef.current = null;
+      }
     };
   }, []);
 
-  // Handle Focus End Looping Alarm
+  // handle focus end looping alarm
   useEffect(() => {
     if (!focusEndAudioRef.current) return;
 
@@ -70,7 +78,23 @@ export function Session() {
     }
   }, [isWaitingForBreak, isMuted]);
 
-  // Handle Break BGM playback
+  // handle break end looping alarm
+  useEffect(() => {
+    if (!breakEndAudioRef.current) return;
+
+    breakEndAudioRef.current.muted = isMuted;
+
+    if (isWaitingForFocus && !isMuted) {
+      breakEndAudioRef.current
+        .play()
+        .catch((err) => console.error("Break end alarm error:", err));
+    } else {
+      breakEndAudioRef.current.pause();
+      breakEndAudioRef.current.currentTime = 0;
+    }
+  }, [isWaitingForFocus, isMuted]);
+
+  // handle break BGM playback
   useEffect(() => {
     if (!breakAudioRef.current) return;
 
@@ -85,16 +109,6 @@ export function Session() {
     }
   }, [isBreak, isActive, isMuted]);
 
-  const playChime = (soundSrc) => {
-    if (isMuted) return;
-    try {
-      const audio = new Audio(soundSrc);
-      audio.play().catch((err) => console.error("Chime error:", err));
-    } catch (error) {
-      console.error("Audio playback error:", error);
-    }
-  };
-
   useEffect(() => {
     let interval = null;
 
@@ -104,7 +118,6 @@ export function Session() {
       }, 1000);
     } else if (timeLeft === 0) {
       if (!isBreak && !isWaitingForBreak && !isWaitingForFocus) {
-        // 🔔 FOCUS ENDED -> Pause, play alarm, wait to start break
         setIsActive(false);
         setIsWaitingForBreak(true);
 
@@ -112,8 +125,6 @@ export function Session() {
           setFocusStreak((prev) => prev + 1);
         }
       } else if (isBreak && !isWaitingForFocus) {
-        // 🔔 BREAK ENDED -> Pause, play chime, wait to start next focus session
-        playChime(BREAK_END_CHIME);
         setIsActive(false);
         setIsBreak(false);
         setIsWaitingForFocus(true);
@@ -123,7 +134,15 @@ export function Session() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, timeLeft, isBreak, isWaitingForBreak, isWaitingForFocus, currentSession, isMuted]);
+  }, [
+    isActive,
+    timeLeft,
+    isBreak,
+    isWaitingForBreak,
+    isWaitingForFocus,
+    currentSession,
+    isMuted,
+  ]);
 
   const startBreakManually = () => {
     if (focusEndAudioRef.current) {
@@ -137,6 +156,10 @@ export function Session() {
   };
 
   const startFocusManually = () => {
+    if (breakEndAudioRef.current) {
+      breakEndAudioRef.current.pause();
+      breakEndAudioRef.current.currentTime = 0;
+    }
     setIsWaitingForFocus(false);
     setCurrentSession((prev) => (prev < totalSessions ? prev + 1 : 1));
     setTimeLeft(FOCUS_TIME);
@@ -152,7 +175,9 @@ export function Session() {
   };
 
   const handleDistraction = () => {
-    setDistractions((prev) => prev + 1);
+    if (isActive && !isBreak && !isWaitingForBreak && !isWaitingForFocus) {
+      setDistractions((prev) => prev + 1);
+    }
   };
 
   const handleEndSession = () => {
@@ -160,27 +185,63 @@ export function Session() {
       focusEndAudioRef.current.pause();
       focusEndAudioRef.current.currentTime = 0;
     }
+    if (breakEndAudioRef.current) {
+      breakEndAudioRef.current.pause();
+      breakEndAudioRef.current.currentTime = 0;
+    }
     if (breakAudioRef.current) {
       breakAudioRef.current.pause();
       breakAudioRef.current.currentTime = 0;
     }
+
+    const completedFocusSeconds = (currentSession - 1) * FOCUS_TIME;
+    const currentSessionFocusSeconds = isBreak
+      ? FOCUS_TIME
+      : FOCUS_TIME - timeLeft;
+    const totalFocusSeconds =
+      completedFocusSeconds + currentSessionFocusSeconds;
+
+    const formatTotalDuration = (seconds) => {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    };
+
+    const calculatedScore = Math.max(0, 100 - distractions * 5);
+
+    const now = new Date();
+    const currentHour = now.getHours();
+    const timeGreeting =
+      currentHour < 12
+        ? "good morning"
+        : currentHour < 18
+          ? "good afternoon"
+          : "good evening";
+    const formattedLiveTime = now
+      .toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })
+      .toLowerCase();
 
     setIsEndModalOpen(false);
     navigate("/end-session", {
       state: {
         category,
         task,
-        duration: formatTime(FOCUS_TIME - timeLeft),
+        duration: formatTotalDuration(totalFocusSeconds),
         started: startTime || "8:00pm",
         distractions: String(distractions),
-        focusScore: `${Math.max(50, 100 - distractions * 5)}%`,
-        date: new Date()
+        focusScore: `${calculatedScore}%`,
+        date: now
           .toLocaleDateString("en-US", {
             month: "long",
             day: "numeric",
             year: "numeric",
           })
           .toLowerCase(),
+        greeting: `${timeGreeting} | ${formattedLiveTime}`,
       },
     });
   };
@@ -228,6 +289,7 @@ export function Session() {
             <DistractionCamera
               isActive={isActive}
               isBreak={isBreak}
+              isWaiting={isWaitingForBreak || isWaitingForFocus}
               isMuted={isMuted}
               onDistractionDetected={handleDistraction}
             />
@@ -252,10 +314,10 @@ export function Session() {
                   {isBreak
                     ? "take a break"
                     : isWaitingForBreak
-                    ? "session complete"
-                    : isWaitingForFocus
-                    ? "break complete"
-                    : "focus"}
+                      ? "session complete"
+                      : isWaitingForFocus
+                        ? "break complete"
+                        : "focus"}
                 </p>
                 <button
                   type="button"
@@ -270,10 +332,10 @@ export function Session() {
                 {isBreak
                   ? "break time 𑣲₍ ᐢ. .ᐢ₎"
                   : isWaitingForBreak
-                  ? "ready for break? ⊹ ˖ Ი𐑼"
-                  : isWaitingForFocus
-                  ? "ready to focus? ₍ᐢ.  ̫  .ᐢ₎"
-                  : `category: ${category} **°.*`}
+                    ? "ready for break? ⊹ ˖ Ი𐑼"
+                    : isWaitingForFocus
+                      ? "ready to focus? ₍ᐢ.  ̫  .ᐢ₎"
+                      : `category: ${category} **°.*`}
               </p>
             </div>
 
@@ -286,10 +348,10 @@ export function Session() {
                   {isBreak
                     ? "rest & hydrate"
                     : isWaitingForBreak
-                    ? "time for a break"
-                    : isWaitingForFocus
-                    ? "break over"
-                    : `session ${currentSession}/${totalSessions}`}
+                      ? "time for a break"
+                      : isWaitingForFocus
+                        ? "break over"
+                        : `session ${currentSession}/${totalSessions}`}
                 </span>
               </div>
 

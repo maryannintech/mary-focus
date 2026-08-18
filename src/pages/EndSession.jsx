@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { FormModal } from "../components/FormModal"; // Adjust path as needed
+import { FormModal } from "../components/FormModal";
 
 export function EndSession() {
   const location = useLocation();
@@ -9,20 +9,24 @@ export function EndSession() {
   const {
     category = "reviewing",
     task = "review quiz",
-    duration = "24:58",
+    duration = "00:00",
     distractions = "0",
-    focusScore = "95%",
-    started = "8:00pm",
-    date = "july 26, 2026",
+    focusScore = "100%",
+    started = "--:--",
+    date = new Date()
+      .toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+      .toLowerCase(),
     greeting = "good evening | 9:17pm",
   } = location.state || {};
 
   return (
-    <div className="relative min-h-screen bg-[#05081c] text-white flex flex-col justify-between font-mono select-none">
-      {/* Main Content Card */}
+    <div className="relative min-h-screen text-white flex flex-col justify-between font-mono select-none">
       <div className="flex flex-col items-center justify-center -mt-6">
         <div className="w-full max-w-xl px-6">
-          {/* Subtitle / Header */}
           <div className="mb-6">
             <p className="text-[#8b8cb5] text-sm tracking-wider mb-1 lowercase">
               {date}
@@ -48,6 +52,7 @@ export function EndSession() {
 
           <hr className="border-t border-white/20 my-6" />
 
+          {/* Stats Metrics Row */}
           <div className="grid grid-cols-3 text-center mb-10">
             <div className="flex flex-col gap-1">
               <span className="text-xs text-[#8b8cb5] tracking-wider">
