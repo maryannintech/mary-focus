@@ -1,193 +1,191 @@
-# 🐇 mary.focus
+# mary.focus ⋆⭒˚.⋆
 
-> **A personal AI-powered Pomodoro app built to help me stay focused and spend less time on my phone.**
+> A cozy, minimalist Pomodoro web app with real-time, on-device computer vision to help keep study sessions on track and phone distractions away.
 
-🔗 **Live Demo:** https://mary-focus.vercel.app/
+[![Live Demo](https://img.shields.io/badge/Live_Demo-mary--focus.vercel.app-7c3aed?style=for-the-badge\&logo=vercel\&logoColor=white)](https://mary-focus.vercel.app/)
 
----
-
-## ✦ About
-
-**mary.focus** is a personal Pomodoro and focus-tracking web application that uses **image classification** to detect when I am using my phone during a focus session.
-
-The idea came from a very real problem I have: **once I pick up my phone, I can get distracted incredibly easily.** I might check one thing, open another app, and suddenly realize that much more time has passed than I intended.
-
-So instead of trying to build another generic productivity app, I decided to build one **for myself** — something that could help me become more aware of when I was losing focus.
-
-During a focus session, the app uses my webcam and a custom-trained model to recognize whether I am in my expected focus state or using my phone. If I stay distracted, the app gives me a reminder to get back to what I was working on.
-
----
-
-## ✦ Why I Made This
-
-I made **mary.focus** because I wanted to solve a problem that I personally experience while studying.
-
-I'm the kind of person who can sit down intending to study for 25 minutes, pick up my phone for "just a second," and then completely lose track of time 😭
-
-I wanted to create something that wouldn't just tell me how long I had been studying, but would also help me **notice my distractions**.
-
-The project also gave me an opportunity to combine two areas I'm currently interested in:
-
-* 🌐 **Web Development**
-* 🧠 **Deep Learning**
-
-I'm currently learning deep learning, and while taking a modern AI course, I came across **Google's Teachable Machine**. I was fascinated by how accessible it made machine learning experimentation, especially for someone who is still a beginner in deep learning
-
-Teachable Machine allowed me to train an image classification model using examples from my own webcam and export it for use in a web application
-
-That made me realize I could take something I'm already comfortable with — **building web applications** — and connect it with something I'm still learning — **machine learning and image classification**
-
-And that's how **mary.focus** started
-
----
-
-## ✦ Features
-
-### 🍅 Pomodoro Focus Sessions
-
-* Create a focus session based on what you're currently working on
-* Choose a category such as reviewing, upskilling, assignments, or personal projects
-* Use a Pomodoro-style focus timer
-* Complete multiple focus sessions throughout the day
-
-### 📱 Phone Distraction Detection
-
-* Uses the webcam during focus sessions
-* Runs a custom image classification model
-* Detects when I am using my phone
-* Tracks phone distractions during sessions
-
-### 📊 Focus Statistics
-
-Track things such as:
-
-* Deep focus time
-* Number of distractions
-* Focus streaks
-* Completed Pomodoro sessions
-* Activity/category
-* Session start time
-
-### 🌸 Personal Focus Experience
-
-The interface is intentionally designed as a small, personal digital space rather than a generic productivity dashboard.
-
-The ASCII/Unicode-inspired visuals and gentle messages are part of the personality of **mary.focus**
-
----
-
-## ✦ How the AI Works
-
-The phone detection feature uses an **image classification model created with Google Teachable Machine**
-
-I trained the model using examples captured from my own webcam and exported the resulting model for use in the web application.
-
-The basic flow is:
-
-```text
-Webcam
-   ↓
-Image
-   ↓
-Custom Image Classification Model
-   ↓
-Focus / Android / Iphone Prediction
-   ↓
-Distraction Tracking
-   ↓
-Reminder
+```
+ /)/)
+( . .)
+( づ♡
 ```
 
-Teachable Machine is designed to let users gather examples, train a model, and export it for use in websites and applications.Its models can be used with TensorFlow.js in JavaScript-based projects
+## The Story & Inspiration
+
+I'm someone who gets easily distracted once I pick up my phone. What starts as a quick check can easily turn into several minutes of scrolling without realizing how much time has passed. I wanted to build something that could gently interrupt that habit while I was studying
+
+While taking a **Modern AI / Deep Learning course**, I discovered **Google Teachable Machine**. As a beginner in deep learning, I was excited to realize that I could connect something I already enjoy — **web development** — with something I was currently learning — **computer vision and image classification**
+
+I trained a custom image classification model using examples of myself in different focus and phone-use situations, including **iPhone and Android phone postures**.
+
+During a focus session, the model runs directly in the browser using my webcam. When it detects that I'm using my phone, **mary.focus** triggers an audio alert and records the distraction.
+
+The result is a productivity tool built specifically around one very personal problem:
+
+> *"If I pick up my phone, I might forget why I picked it up in the first place."* 😭
 
 ---
 
-## ⚠️ About the Model
+## Features
 
-The model used by **mary.focus** was trained specifically using **my own images and environment**.
+### Pomodoro Cycles
 
-Because of that, the model is **not intended to be a general-purpose phone detector** and may not work reliably for other people
+* 25-minute focus sessions
+* 5-minute break intervals
+* Guided transitions between focus and break periods
+* Start another session after completing a focus cycle
 
-The goal of this project was to build a **personal productivity tool** while learning about image classification and exploring how machine learning can be integrated into a web application.
+### On-Device Phone Detection
 
-In other words:
+* Uses the webcam during active focus sessions
+* Runs a custom Teachable Machine image classification model
+* Recognizes trained iPhone and Android phone-use postures
+* Provides an audio alert when a distraction is detected
+* Tracks distractions throughout the session
 
-> **It was trained for Mary, because Mary is the person who keeps getting distracted by her phone 😭**
+### Straightforward Session Flow
+
+* Computer vision detection pauses during breaks and transition screens
+* Phone detection only runs when it is relevant to the focus session
+* Prevents distractions during designated rest periods from affecting focus statistics
+
+### Audio Ambience & Alerts
+
+* Background audio during breaks
+* Transition alarms
+* Phone distraction alerts
+* Instant mute/unmute controls
+
+### Focus Analytics
+
+At the end of a session, **mary.focus** summarizes:
+
+* Total focus time
+* Deep focus time
+* Number of distractions
+* Focus score
+* Activity category
+* Session start time
 
 ---
 
-## ✦ Tech Stack
+## How the Computer Vision Works
 
-**Frontend**
+The phone detection system uses an **image classification model trained with Google Teachable Machine**.
+
+The model was trained using webcam images of myself in different situations.
+
+```
+Webcam
+   ↓
+Video Frame
+   ↓
+TensorFlow.js
+   ↓
+Teachable Machine Image Classifier
+   ↓
+┌─────────────────────────────┐
+│ Focus / iPhone / Android    │
+└─────────────────────────────┘
+   ↓
+Phone Detected?
+   ↓
+Audio Alert + Distraction Log
+```
+
+The model runs **on-device in the browser**, allowing webcam frames to be processed without sending them to a remote AI server.
+
+### Model Limitations
+
+The model was intentionally trained around **my own appearance, environment, and phone-use habits**.
+
+Because of this, it is **not a general-purpose phone detection model** and may not perform reliably for other users.
+
+During development, I also tested the model against situations that could cause false positives, such as covering my mouth or moving my hands near my face. I retrained the model with additional examples to improve its ability to distinguish normal study behavior from phone use.
+
+This iterative process was one of the most valuable parts of building the project because it showed me that training a model is not simply a one-time step — **real-world testing reveals cases that the original training data didn't account for.**
+
+---
+
+## Tech Stack
+
+### Frontend
 
 * React
-* TailwindCSS
+* Vite
+* React Router
+* Tailwind CSS
 
-**Machine Learning**
+### Machine Learning / Computer Vision
 
-* Google Teachable Machine
 * TensorFlow.js
-* Image Classification
+* Google Teachable Machine
+* `@teachablemachine/image`
 
-**Deployment**
+### Deployment
 
 * Vercel
 
 ---
 
-## ✦ What I Learned
+## What I Learned
 
-This project was especially meaningful to me because it was one of my first opportunities to connect my existing web development skills with concepts from deep learning.
+Building **mary.focus** gave me the opportunity to apply concepts from my deep learning course to a project I actually wanted to use.
 
-Through this project, I learned more about:
+Through the project, I learned about:
 
-* Integrating a machine learning model into a web application
 * Image classification
-* Using webcam input in the browser
-* Working with Teachable Machine
-* Running predictions in a JavaScript environment
-* Designing around AI limitations
-* Tracking and visualizing personal productivity data
-* Thinking about AI from a user-centered perspective
+* Training and iterating on a custom dataset
+* Webcam-based machine learning in the browser
+* Running TensorFlow.js models client-side
+* Integrating machine learning into a React application
+* Handling model predictions in real time
+* Dealing with false positives
+* Designing around the limitations of a custom-trained model
+* Connecting AI concepts with practical web development
 
-More importantly, I learned that **I don't need to be an expert in deep learning before I can start building things with it.**
+Most importantly, this project taught me that **I don't need to be an expert in deep learning before I can start building with it.**
 
-As a beginner, tools like Teachable Machine gave me a way to experiment, understand the basic workflow, and connect what I'm learning in deep learning with something I already enjoy doing: **building web applications.**
-
----
-
-## ✦ A Note on Privacy
-
-The webcam is used for the phone-detection feature during an active focus session
-
-The model is intended to process the webcam input locally in the browser rather than requiring the images to be uploaded to a server. Teachable Machine supports on-device use of models and notes that webcam or microphone data can be processed without leaving the user's computer
-
-Camera permission is required for the detection feature to work
+As a beginner, Teachable Machine gave me a way to experiment with computer vision while still using the web development skills I'm comfortable with.
 
 ---
 
-## ✦ Future Ideas
+## Privacy
 
-This project started intentionally small, but there are a few things I may explore in the future:
+The webcam is only used when the computer vision feature is active during a focus session.
 
-* [ ] More robust phone detection
-* [ ] Cloud-based session history
-* [ ] More detailed productivity analytics
-* [ ] More focus session customization
-* [ ] Improved model accuracy across different environments
+The image classification model runs locally in the browser using TensorFlow.js. Webcam frames are processed for prediction rather than being uploaded to a backend server for inference.
+
+Camera permission is required for phone detection to work.
+
+Because the model is trained specifically around my own appearance and environment, the application is primarily intended as a **personal productivity project** rather than a general-purpose computer vision application.
 
 ---
 
-## ✦ Made For Me 🌸
+## Future Ideas
 
-I didn't build **mary.focus** because I wanted to create the perfect productivity app
+Some ideas I may explore in the future:
 
-I built it because I wanted something that would help **me** stay focused
+* Improve model accuracy across different environments
+* More detailed productivity analytics
+* Cloud-based session history
+* Additional focus session customization
+* More computer vision classes and edge-case training
+
+---
+
+## Made For Me
+
+I didn't build **mary.focus** to create the perfect productivity app.
+
+I built it because I needed something to help **me** stay focused.
 
 It started with a simple problem:
 
 > *"Why did I pick up my phone again?"*
 
-And turned into an opportunity to explore how **web development and deep learning can work together**.
+Then, while learning deep learning, I realized I could turn that problem into an opportunity to experiment with **computer vision, image classification, and web development**.
+
+And that's how **mary.focus** came to life.
 
 ⋆⭒˚.⋆
