@@ -13,6 +13,7 @@ export function DistractionCamera({
   const containerRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [detectedLabel, setDetectedLabel] = useState("");
+  const [isPipActive, setIsPipActive] = useState(false);
 
   const isDistractedRef = useRef(false);
   const consecutiveFramesRef = useRef(0);
@@ -61,6 +62,14 @@ export function DistractionCamera({
         await webcamRef.current.setup();
         await webcamRef.current.play();
 
+        const videoEl = webcamRef.current.webcam;
+        if (videoEl) {
+          videoEl.setAttribute("playsinline", "true");
+          videoEl.setAttribute("webkit-playsinline", "true");
+          videoEl.addEventListener("enterpictureinpicture", () => setIsPipActive(true));
+          videoEl.addEventListener("leavepictureinpicture", () => setIsPipActive(false));
+        }
+
         if (isMounted) {
           setIsLoading(false);
           if (containerRef.current) {
@@ -94,7 +103,6 @@ export function DistractionCamera({
       webcamRef.current.update();
       const { isActive, isBreak, isWaiting } = propsRef.current;
 
-      // Only run predictions during active focus sessions
       if (isActive && !isBreak && !isWaiting) {
         await predict();
       } else {
@@ -144,6 +152,26 @@ export function DistractionCamera({
     }
   };
 
+  const togglePictureInPicture = async () => {
+    const videoEl = webcamRef.current?.webcam;
+    if (!videoEl) return;
+
+    try {
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+      } else if (videoEl.requestPictureInPicture) {
+        await videoEl.requestPictureInPicture();
+      } else if (videoEl.webkitSetPresentationMode) {
+        const currentMode = videoEl.webkitPresentationMode;
+        videoEl.webkitSetPresentationMode(
+          currentMode === "picture-in-picture" ? "inline" : "picture-in-picture"
+        );
+      }
+    } catch (err) {
+      console.error("Picture-in-Picture error:", err);
+    }
+  };
+
   return (
     <div className="relative w-96 h-96 rounded-2xl ring-8 ring-(--violet) bg-[#c4c4cc] overflow-hidden flex flex-col items-center justify-center shadow-lg">
       <div
@@ -157,6 +185,17 @@ export function DistractionCamera({
           <p>loading</p>
           <p className="tracking-widest">....</p>
         </div>
+      )}
+
+      {!isLoading && (
+        <button
+          type="button"
+          onClick={togglePictureInPicture}
+          title="Toggle Picture-in-Picture"
+          className="absolute top-3 right-3 bg-black/60 hover:bg-black/80 backdrop-blur-md text-(--violet) hover:text-white px-2.5 py-1 rounded-lg text-xs font-mono border border-white/10 cursor-pointer transition-all flex items-center gap-1"
+        >
+          <span>{isPipActive ? "⤓ exit pip" : "⤢ pip"}</span>
+        </button>
       )}
 
       {!isLoading && (

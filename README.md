@@ -69,6 +69,9 @@ At the end of a session, **mary.focus** summarizes:
 
 ---
 
+### Picture-in-Picture Mode
+The camera feed can be placed in a floating Picture-in-Picture window, allowing the focus session and camera monitoring to remain visible while studying in another browser tab
+
 ## How the Computer Vision Works
 
 The phone detection system uses an **image classification model trained with Google Teachable Machine**.
@@ -127,6 +130,7 @@ This iterative process was one of the most valuable parts of building the projec
 * Vercel
 
 ---
+
 
 ## What I Learned
 

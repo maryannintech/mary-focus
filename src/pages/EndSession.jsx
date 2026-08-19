@@ -35,7 +35,7 @@ export function EndSession() {
           </h1>
         </div>
 
-        {/* Time & Category / Task Block */}
+   
         <div className="flex items-center justify-between my-8">
           <div>
             <span className="text-6xl font-bold tracking-wider">
@@ -51,7 +51,6 @@ export function EndSession() {
 
         <hr className="border-t border-white/20 my-6" />
 
-        {/* Stats Metrics Row */}
         <div className="grid grid-cols-3 text-center mb-10">
           <div className="flex flex-col gap-1">
             <span className="text-xs text-[#8b8cb5] tracking-wider">
@@ -92,7 +91,6 @@ export function EndSession() {
         </div>
       </div>
 
-      {/* FormModal to start a new session */}
       <FormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
