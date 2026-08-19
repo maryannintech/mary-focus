@@ -14,15 +14,11 @@
 
 I'm someone who gets easily distracted once I pick up my phone. What starts as a quick check can easily turn into several minutes of scrolling without realizing how much time has passed. I wanted to build something that could gently interrupt that habit while I was studying
 
-While taking a **Modern AI / Deep Learning course**, I discovered **Google Teachable Machine**. As a beginner in deep learning, I was excited to realize that I could connect something I already enjoy — **web development** — with something I was currently learning — **computer vision and image classification**
+While taking a **Modern AI / Deep Learning course** in Cisco, I discovered **Google Teachable Machine**. As a beginner in deep learning, I was excited to learn that I could connect something I already enjoy — **web development** — with something I was currently learning — **computer vision and image classification**
 
 I trained a custom image classification model using examples of myself in different focus and phone-use situations, including **iPhone and Android phone postures**.
 
 During a focus session, the model runs directly in the browser using my webcam. When it detects that I'm using my phone, **mary.focus** triggers an audio alert and records the distraction.
-
-The result is a productivity tool built specifically around one very personal problem:
-
-> *"If I pick up my phone, I might forget why I picked it up in the first place."* 😭
 
 ---
 
