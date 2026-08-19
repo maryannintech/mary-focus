@@ -1,4 +1,4 @@
-# mary.focus ⋆⭒˚.⋆
+# 🐇 mary.focus ⋆⭒˚.⋆
 
 > A cozy, minimalist Pomodoro web app with real-time, on-device computer vision to help keep study sessions on track and phone distractions away.
 
@@ -21,6 +21,34 @@ I trained a custom image classification model using examples of myself in differ
 During a focus session, the model runs directly in the browser using my webcam. When it detects that I'm using my phone, **mary.focus** triggers an audio alert and records the distraction.
 
 ---
+
+## Preview
+
+### Home
+The starting point for creating a personalized focus session.
+
+![mary.focus home page](./src/screenshots/home.png)
+![mary.focus session form](./src/screenshots/session-form.png)
+
+### Focus Session
+A 25-minute focus block with real-time camera monitoring.
+
+![mary.focus focus session](./src/screenshots/focus-session.png)
+
+### Phone Detection
+When the model detects a phone posture, mary.focus triggers a distraction alert and records the event
+
+![mary.focus phone detection](./src/screenshots/phone-detection.png)
+
+### Session Summary
+A summary of focus time, distractions, and overall session performance.
+
+![mary.focus session summary](./src/screenshots/session-summary.png)
+
+### Picture-in-Picture
+The camera feed can be moved into a floating Picture-in-Picture window while studying in another tab.
+
+![mary.focus picture-in-picture](./src/screenshots/picture-in-picture.png)
 
 ## Features
 
@@ -91,8 +119,6 @@ Phone Detected?
    ↓
 Audio Alert + Distraction Log
 ```
-
-The model runs **on-device in the browser**, allowing webcam frames to be processed without sending them to a remote AI server.
 
 ### Model Limitations
 
